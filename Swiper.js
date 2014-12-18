@@ -1,14 +1,12 @@
 /**
- * @jsx React.DOM
+ * A mixin to support swipe events
  */
 
 var React = require('react');
 var merge = require('react/lib/merge');
 
-var Swiper = React.createClass({displayName: 'Swiper',
+var SwiperMixin = React.createClass({displayName: 'Swiper',
   propTypes: {
-    tagName: React.PropTypes.string,
-    component: React.PropTypes.component,
     minSwipeLength: React.PropTypes.number,
     moveThreshold: React.PropTypes.number,
     onSwipe: React.PropTypes.func,
@@ -24,7 +22,6 @@ var Swiper = React.createClass({displayName: 'Swiper',
 
   getDefaultProps: function() {
     return {
-      tagName: 'div',
       minSwipeLength: 75,
       moveThreshold: 10
     };
@@ -39,18 +36,13 @@ var Swiper = React.createClass({displayName: 'Swiper',
     };
   },
 
-  render: function() {
-    var Component = this.props.component || React.DOM[this.props.tagName];
-    return this.transferPropsTo(
-      Component({onTouchStart: this.handleTouchStart, 
-          onTouchEnd: this.handleTouchEnd, 
-          onTouchCancel: this.handleTouchEnd, 
-          onTouchMove: this.handleTouchMove}, 
-        this.props.children
-      )
-    );
+  componentDidMount() {
+    this.addEventListener('touchStart', this.handleTouchStart);
+    this.addEventListener('touchEnd', this.handleTouchEnd);
+    this.addEventListener('touchCancel', this.handleTouchEnd);
+    this.addEventListener('touchMove', this.handleTouchMove);
   },
-
+  
   handleTouchStart: function (e) {
     if (e.touches.length !== 1) {
       return;
@@ -153,4 +145,4 @@ var Swiper = React.createClass({displayName: 'Swiper',
   }
 });
 
-module.exports = Swiper;
+module.exports = SwiperMixin;
